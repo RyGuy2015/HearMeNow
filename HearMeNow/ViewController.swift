@@ -4,7 +4,7 @@
 //
 //  Created by Matthew Knott on 30/10/2014.
 //  Copyright (c) 2014 Matthew Knott. All rights reserved.
-//
+//  This is the View Controller
 
 import UIKit
 import AVFoundation
