@@ -69,7 +69,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             {
                 soundPlayer?.delegate = self
                 soundPlayer?.enableRate = true
-                soundPlayer?.rate = 0.5
+                soundPlayer?.rate = 0.75
                 soundPlayer?.play()
             }
             else
