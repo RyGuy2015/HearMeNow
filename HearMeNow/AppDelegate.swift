@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  HearMeNow
 //
-//  Created by Matthew Knott on 30/10/2014.
-//  Copyright (c) 2014 Matthew Knott. All rights reserved.
+//  Created by Ryan Ingram on 30/10/2014.
+//  Copyright (c) 2014 Ryan Ingram. All rights reserved.
 //
 
 import UIKit

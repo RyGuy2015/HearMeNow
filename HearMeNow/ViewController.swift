@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  HearMeNow
 //
-//  Created by Matthew Knott on 30/10/2014.
-//  Copyright (c) 2014 Matthew Knott. All rights reserved.
+//  Created by Ryan Ingram on 30/10/2014.
+//  Copyright (c) 2014 Ryan Ingram. All rights reserved.
 //  This is the View Controller
 
 import UIKit
@@ -16,6 +16,11 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
     var soundRecorder : AVAudioRecorder?
     var session : AVAudioSession?
     var soundPath : String?
+    
+    let recordSettings = [AVSampleRateKey : NSNumber(float: Float(44100.0)),
+    AVFormatIDKey : NSNumber(int: Int32(kAudioFormatMPEG4AAC)),
+    AVNumberOfChannelsKey : NSNumber(int: 1),
+    AVEncoderAudioQualityKey : NSNumber(int: Int32(AVAudioQuality.Medium.rawValue))]
     
     @IBOutlet weak var recordButton: UIButton!
     @IBOutlet weak var playButton: UIButton!
@@ -37,7 +42,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
                 }
                 else
                 {
-                    println("Unable to record")
+                    print("Unable to record")
                 }
             }
         }
@@ -53,7 +58,12 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             let url = NSURL(fileURLWithPath: soundPath!)
             var error : NSError?
             
-            soundPlayer = AVAudioPlayer(contentsOfURL: url, error: &error)
+            do {
+                soundPlayer = try AVAudioPlayer(contentsOfURL: url)
+            } catch let error1 as NSError {
+                error = error1
+                soundPlayer = nil
+            }
             
             if(error == nil)
             {
@@ -64,7 +74,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
             }
             else
             {
-                println("Error initializing player \(error)")
+                print("Error initializing player \(error)")
             }
             playButton.setTitle("Pause", forState: UIControlState.Normal)
             hasRecording = false
@@ -76,11 +86,11 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
         }
     }
 
-    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder!, successfully flag: Bool) {
+    func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         recordButton.setTitle("Record", forState: UIControlState.Normal)
     }
 
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
         playButton.setTitle("Play", forState: UIControlState.Normal)
     }
     
@@ -93,17 +103,30 @@ class ViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDe
         let url = NSURL(fileURLWithPath: soundPath!)
         
         session = AVAudioSession.sharedInstance()
-        session?.setActive(true, error: nil)
+        do {
+            try session?.setActive(true)
+        } catch _ {
+        }
         
         var error : NSError?
         
-        session?.setCategory(AVAudioSessionCategoryPlayAndRecord, error: &error)
+        do {
+            try session?.setCategory(AVAudioSessionCategoryPlayAndRecord)
+        } catch var error1 as NSError {
+            error = error1
+        }
         
-        soundRecorder = AVAudioRecorder(URL: url, settings: nil, error: &error)
+        do {
+            soundRecorder = try AVAudioRecorder(URL: url, settings: recordSettings )
+            //soundRecorder = try AVAudioRecorder(URL: url, settings: nil)
+        } catch var error1 as NSError {
+            error = error1
+            soundRecorder = nil
+        }
         
         if(error != nil)
         {
-            println("Error initializing the recorder: \(error)")
+            print("Error initializing the recorder: \(error)")
         }
         
         soundRecorder?.delegate = self
